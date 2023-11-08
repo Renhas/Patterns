@@ -33,8 +33,15 @@ namespace MatVec.Matrices.Decorators
 
         public virtual void Accept(IVisitor visitor) 
         {
-            var ids = GetIds(visitor.Row, visitor.Column);
-            visitor.SetIds(ids[0], ids[1]);
+            var mask = visitor.Mask;
+            var newMask = IndexMask.CreateMask(_matrix);
+            for (int r = 0; r < Rows; r++)
+                for (int c = 0; c < Columns; c++) 
+                {
+                    var ids = GetIds(r, c);
+                    newMask[ids[0], ids[1]] = mask.GetIds(r, c);                    
+                }
+            mask.Mask = newMask;
             _matrix.Accept(visitor);
         }
         public virtual void Draw(IMatrixImaginator imaginator) 

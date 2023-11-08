@@ -19,17 +19,8 @@ namespace MatVec.Matrices.Imaginators
 
         private void DrawElements(IMatrix matrix)
         {
-            VisitorProvider visitor;
-            for (int r = 0; r < matrix.Rows; r++)
-                for (int c = 0; c < matrix.Columns; c++)
-                {
-                    visitor = new VisitorProvider(matrix[r, c], r, c);
-                    matrix.Accept(visitor);
-                    if (visitor.Provide)
-                    {
-                        DrawElement(matrix, r, c);
-                    }
-                }
+            VisitorDrawer visitor = new VisitorDrawer(Drawer, matrix);
+            matrix.Accept(visitor);
         }
 
         protected void DrawBorder(IMatrix matrix)

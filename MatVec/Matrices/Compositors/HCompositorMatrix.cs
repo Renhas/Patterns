@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using MatVec.Matrices.Drawers;
@@ -150,10 +151,17 @@ namespace MatVec.Matrices.Compositors
 
         public void Accept(IVisitor visitor)
         {
-            var ids = GetIds(visitor.Row, visitor.Column);
-            if (_currentId < 0) return;
-            visitor.SetIds(ids[0], ids[1]);
-            _matrices[_currentId].Accept(visitor);
+            var mask = visitor.Mask;
+            var totalMask = mask.Mask;
+            int shift = 0;
+            foreach (var mtx in _matrices) 
+            {
+                var currentMask = mask.GetSubMask(0, shift);
+                mask.Mask = currentMask;
+                mtx.Accept(visitor);
+                shift += mtx.Columns;
+                mask.Mask = totalMask;                
+            }
         }
 
         public void Draw(IMatrixImaginator imaginator)

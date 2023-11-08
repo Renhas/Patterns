@@ -18,8 +18,14 @@ namespace ConsoleApp
             double max_1 = 15.0, max_2 = 100.0;
             int notNull_1 = 14, notNull_2 = 33;
             
-            MatrixInitializer.FillMatrix(simple, notNull_1, max_1);
-            MatrixInitializer.FillMatrix(sparse, notNull_2, max_2);
+            ConsoleDrawer drawer = new ConsoleDrawer();
+            //IMatrix simple = new Matrix(5, 3, drawer);
+            //IMatrix sparse = new SparseMatrix(5, 7, drawer);
+            //double max_1 = 15.0, max_2 = 100.0;
+            //int notNull_1 = 14, notNull_2 = 33;
+
+            //MatrixInitializer.FillMatrix(simple, notNull_1, max_1);
+            //MatrixInitializer.FillMatrix(sparse, notNull_2, max_2);
             /*
             MatrixStats simpleStats = new MatrixStats(simple);
             MatrixStats sparseStats = new MatrixStats(sparse);
