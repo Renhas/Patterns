@@ -40,7 +40,7 @@ ConsoleDrawer drawer = new ConsoleDrawer();
 MatrixImaginator imaginator = new MatrixImaginator(drawer);
 matrix.Draw(imaginator);
 ```
-Вывод в консоль
+Вывод в консоли:
 ```
  ------------------------------
 |5,643 1,760 3,974 8,884 5,160 |
