@@ -72,12 +72,12 @@ namespace MatVec.Matrices.Compositors
                 throw new ArgumentOutOfRangeException(nameof(col));
         }
 
-        public IMatrix? GetMatrix(int row, int column) 
-        {
-            FindMatrix(row, column);
-            if (_currentId < 0) return null;
-            return _matrices[_currentId];
-        }
+        //public IMatrix? GetMatrix(int row, int column) 
+        //{
+        //    FindMatrix(row, column);
+        //    if (_currentId < 0) return null;
+        //    return _matrices[_currentId];
+        //}
 
         public int[] GetIds(int row, int column) 
         {
@@ -150,7 +150,10 @@ namespace MatVec.Matrices.Compositors
 
         public void Accept(IVisitor visitor)
         {
-            visitor.Visit(this);
+            var ids = GetIds(visitor.Row, visitor.Column);
+            if (_currentId < 0) return;
+            visitor.SetIds(ids[0], ids[1]);
+            _matrices[_currentId].Accept(visitor);
         }
 
         public void Draw(IMatrixImaginator imaginator)

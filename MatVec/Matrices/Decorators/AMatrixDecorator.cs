@@ -33,7 +33,9 @@ namespace MatVec.Matrices.Decorators
 
         public virtual void Accept(IVisitor visitor) 
         {
-            visitor.Visit(this);
+            var ids = GetIds(visitor.Row, visitor.Column);
+            visitor.SetIds(ids[0], ids[1]);
+            _matrix.Accept(visitor);
         }
         public virtual void Draw(IMatrixImaginator imaginator) 
         {

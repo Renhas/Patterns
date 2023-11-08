@@ -12,7 +12,7 @@ namespace MatVec.Matrices
 
         public override void Accept(IVisitor visitor)
         {
-            visitor.Visit(this);
+            visitor.VisitSparseMatrix(this);
         }
 
         protected override IVector CreateVector()

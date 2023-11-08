@@ -11,36 +11,38 @@ namespace MatVec.Matrices.Visitors
     internal class VisitorProvider : IVisitor
     {
         public bool Provide { get; private set; }
-        private double _element;
-        private int _row;
-        private int _column;
-        public VisitorProvider() 
+        public double Element { get; private set; }
+        public int Row { get; private set; }
+        public int Column { get; private set; }
+        public VisitorProvider(double value, int row, int column) 
         {
             Provide = false;
-            _row = -1;
-            _column = -1;
-            _element = double.NaN;
+            Row = row;
+            Column = column;
+            Element = value;
+        }
+        public void SetIds(int row, int column)
+        {
+            Row = row;
+            Column = column;
+        }
+
+        public void SetElement(double value)
+        {
+            Element = value;
         }
 
         private bool CheckInfo(IMatrix matrix) 
         {
-            if (_row >= 0 && _row < matrix.Rows ||
-                _column >= 0 && _column < matrix.Columns ||
-                _element == double.NaN) 
+            if (Row >= 0 && Row < matrix.Rows ||
+                Column >= 0 && Column < matrix.Columns) 
             {
                 return true;
             }
             return false;
         }
-        
-        public void SetInfo(int row, int column, double element)
-        {
-            _row = row;
-            _column = column;
-            _element = element;
-        }
 
-        public void Visit(Matrix matrix)
+        public void VisitMatrix(Matrix matrix)
         {
             if (!CheckInfo(matrix)) 
             {
@@ -50,46 +52,14 @@ namespace MatVec.Matrices.Visitors
             Provide = true;
         }
 
-        public void Visit(SparseMatrix matrix)
+        public void VisitSparseMatrix(SparseMatrix matrix)
         {
             if (!CheckInfo(matrix))
             {
                 Provide = false;
                 return;
             }
-            Provide = _element != 0;
-        }
-
-        public void Visit(AMatrixDecorator matrix) 
-        {
-            if (!CheckInfo(matrix)) 
-            {
-                Provide = false;
-                return;
-            }
-            var ids = matrix.GetIds(_row, _column);
-            _row = ids[0];
-            _column = ids[1];
-            matrix.GetMatrix().Accept(this);
-        }
-
-        public void Visit(HCompositorMatrix matrix) 
-        {
-            if (!CheckInfo(matrix))
-            {
-                Provide = false;
-                return;
-            }
-            var ids = matrix.GetIds(_row, _column);
-            var inner = matrix.GetMatrix(_row, _column);
-            if (ids[1] < 0 || inner == null) 
-            {
-                Provide = false;
-                return;
-            }
-            _row = ids[0];
-            _column = ids[1];
-            inner.Accept(this);
+            Provide = Element != 0;
         }
     }
 }

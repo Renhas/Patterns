@@ -19,11 +19,11 @@ namespace MatVec.Matrices.Imaginators
 
         private void DrawElements(IMatrix matrix)
         {
-            VisitorProvider visitor = new VisitorProvider();
+            VisitorProvider visitor;
             for (int r = 0; r < matrix.Rows; r++)
                 for (int c = 0; c < matrix.Columns; c++)
                 {
-                    visitor.SetInfo(r, c, matrix[r, c]);
+                    visitor = new VisitorProvider(matrix[r, c], r, c);
                     matrix.Accept(visitor);
                     if (visitor.Provide)
                     {
