@@ -15,6 +15,5 @@ namespace MatVec.Matrices.Visitors
         void VisitMatrix(Matrix matrix);
         void VisitSparseMatrix(SparseMatrix matrix);
         void SetIds(int row, int column);
-        void SetElement(double value);
     }
 }
