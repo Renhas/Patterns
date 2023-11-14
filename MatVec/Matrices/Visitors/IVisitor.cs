@@ -10,8 +10,11 @@ namespace MatVec.Matrices.Visitors
 {
     public interface IVisitor
     {
-        public IndexMask Mask { get; }
+        public int Row { get; }
+        public int Column { get; }
         void VisitMatrix(Matrix matrix);
         void VisitSparseMatrix(SparseMatrix matrix);
+        void SetIds(int row, int column);
+        void SetElement(double value);
     }
 }
