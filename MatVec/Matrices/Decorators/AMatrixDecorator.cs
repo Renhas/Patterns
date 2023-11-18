@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using MatVec.Matrices.Drawers;
 using MatVec.Matrices.Imaginators;
-using MatVec.Matrices.Visitors;
 
 namespace MatVec.Matrices.Decorators
 {
@@ -26,34 +25,16 @@ namespace MatVec.Matrices.Decorators
             return _matrix;
         }
 
-        public IMatrix GetElement() 
+        public IMatrix Undecorate() 
         {
-            return _matrix.GetElement();
+            return _matrix.Undecorate();
         }
 
-        public virtual void Accept(IVisitor visitor) 
-        {
-            var ids = GetIds(visitor.Row, visitor.Column);
-            visitor.SetIds(ids[0], ids[1]);
-            _matrix.Accept(visitor);
-        }
         public virtual void Draw(IMatrixImaginator imaginator) 
         {
             imaginator.DrawMatrix(this);
         }
 
         public abstract double this[int row, int col] { get; set; }
-
-
-        //public virtual void Draw() 
-        //{
-        //    _matrix.Identity = Identity;
-        //    if (Drawer != null)
-        //    {
-        //        _matrix.Drawer = Drawer;
-        //    }
-        //    _matrix.Draw();
-        //    _matrix.Identity = _matrix;
-        //}
     }
 }

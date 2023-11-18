@@ -1,7 +1,6 @@
 ﻿using System;
 using MatVec.Matrices.Drawers;
 using MatVec.Matrices.Imaginators;
-using MatVec.Matrices.Visitors;
 using MatVec.Vectors;
 
 namespace MatVec.Matrices
@@ -37,7 +36,7 @@ namespace MatVec.Matrices
         }
         protected abstract IVector CreateVector();
 
-        public IMatrix GetElement()
+        public IMatrix Undecorate()
         {
             return this;
         }
@@ -47,8 +46,6 @@ namespace MatVec.Matrices
         {
             imaginator.DrawMatrix(this);
         }
-
-        public abstract void Accept(IVisitor visitor);
 
         public double this[int row, int col]
         {

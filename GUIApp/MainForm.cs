@@ -113,7 +113,7 @@ namespace GUIApp
         private void restoreBtn_Click(object sender, EventArgs e)
         {
             if (_matrix == null) return;
-            _matrix = _matrix.GetElement();
+            _matrix = _matrix.Undecorate();
             DrawMatrix();
         }
 

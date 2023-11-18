@@ -1,5 +1,5 @@
 ﻿using MatVec.Matrices.Drawers;
-using MatVec.Matrices.Visitors;
+using MatVec.Matrices.Imaginators.Strategies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,18 +17,12 @@ namespace MatVec.Matrices.Imaginators
             Drawer = drawer;
         }
 
-        private void DrawElements(IMatrix matrix)
+        private void DrawElements(IMatrix matrix, IElementDrawStrategy strategy)
         {
-            VisitorProvider visitor;
             for (int r = 0; r < matrix.Rows; r++)
                 for (int c = 0; c < matrix.Columns; c++)
                 {
-                    visitor = new VisitorProvider(matrix[r, c], r, c);
-                    matrix.Accept(visitor);
-                    if (visitor.Provide)
-                    {
-                        DrawElement(matrix, r, c);
-                    }
+                    strategy.Draw(matrix, r, c, Drawer);
                 }
         }
 
@@ -56,7 +50,7 @@ namespace MatVec.Matrices.Imaginators
         {
             MakeCanvas(matrix);
             DrawBorder(matrix);
-            DrawElements(matrix);
+            DrawElements(matrix, StrategyFactory.Instance.CreateStrategy(matrix));
             Flush();
         }
     }

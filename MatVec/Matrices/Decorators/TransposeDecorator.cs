@@ -1,5 +1,4 @@
 ﻿using MatVec.Matrices.Drawers;
-using MatVec.Matrices.Visitors;
 using System;
 using System.Collections.Generic;
 using System.Linq;

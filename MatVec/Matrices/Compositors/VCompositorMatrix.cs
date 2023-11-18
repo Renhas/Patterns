@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 using MatVec.Matrices.Decorators;
 using MatVec.Matrices.Drawers;
 using MatVec.Matrices.Imaginators;
-using MatVec.Matrices.Visitors;
 
 namespace MatVec.Matrices.Compositors
 {
-    public class VCompositorMatrix : IMatrix
+    public class VCompositorMatrix : IMatrixCompositor
     {
         private HCompositorMatrix _compositor;
         private TransposeDecorator _decorator;
@@ -37,24 +36,39 @@ namespace MatVec.Matrices.Compositors
             _decorator = new TransposeDecorator(_compositor);
         }
 
-        public void Add(IMatrix matrix)
-        {
-            _compositor.Add(new TransposeDecorator(matrix));
-        }
-
         public void Draw(IMatrixImaginator imaginator)
         {
             imaginator.DrawMatrix(_decorator);
         }
 
-        public IMatrix GetElement()
+        public IMatrix Undecorate()
         {
             return this;
         }
 
-        public void Accept(IVisitor visitor)
+        public void Add(IMatrix matrix)
         {
-            _decorator.Accept(visitor);
+            _compositor.Add(new TransposeDecorator(matrix));
+        }
+
+        public void Remove(IMatrix matrix)
+        {
+            _compositor.Remove(matrix);
+        }
+
+        public IMatrix Get(int id)
+        {
+            return _compositor.Get(id);
+        }
+
+        public IMatrix Get(int row, int col)
+        {
+            return _compositor.Get(col, row);
+        }
+
+        public int[] GetIds(int row, int col)
+        {
+            return _compositor.GetIds(col, row);
         }
 
         public double this[int row, int col]
