@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
+using MatVec.Elements;
 using MatVec.Matrices;
 using MatVec.Matrices.Compositors;
 using MatVec.Matrices.Decorators;
@@ -22,19 +23,19 @@ namespace ConsoleApp
             IMatrix sparse = new SparseMatrix(5, 7);
             double max_1 = 15.0, max_2 = 100.0;
             int notNull_1 = 14, notNull_2 = 33;*/
-            RestorableRandom r = new RestorableRandom(100);
-            int state = r.GetState();
-            for (int i = 0; i < 10; i++) 
-            {
-                Console.WriteLine(r.Generator.NextDouble());
-            }
-            r.RestoreState(state);
-            Console.WriteLine();
-            for (int i = 0; i < 10; i++)
-            {
-                Console.WriteLine(r.Generator.NextDouble());
-            }
-            return;
+
+            //RestorableRandom r = new RestorableRandom(100);
+            //int state = r.GetState();
+            //for (int i = 0; i < 10; i++) 
+            //{
+            //    Console.WriteLine(r.Generator.NextDouble());
+            //}
+            //r.RestoreState(state);
+            //Console.WriteLine();
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    Console.WriteLine(r.Generator.NextDouble());
+            //}
 
             //ConsoleDrawer drawer = new ConsoleDrawer();
             //IMatrix simple = new Matrix(5, 3, drawer);
@@ -65,8 +66,7 @@ namespace ConsoleApp
             Draw(matrix, drawer);
             Draw(new TransposeDecorator(matrix), drawer);*/
 
-
-        }
+    }
         
 
         //private static void Draw(IMatrix mtx, IDrawer drawer) 

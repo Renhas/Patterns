@@ -1,5 +1,6 @@
 ﻿using System;
 using CommandsLib.Memento;
+using MatVec.Elements;
 using MatVec.Matrices.Drawers;
 using MatVec.Matrices.Imaginators;
 using MatVec.Vectors;
@@ -41,7 +42,10 @@ namespace MatVec.Matrices
         {
             return this;
         }
-
+        public override IElement GetElement(int row, int col)
+        {
+            return _vectors[col].GetElement(row);
+        }
         public override void Draw(IMatrixImaginator imaginator) 
         {
             imaginator.DrawMatrix(this);

@@ -1,11 +1,12 @@
-﻿using MatVec.Matrices.Drawers;
+﻿using MatVec.Matrices;
+using MatVec.Matrices.Drawers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MatVec.Matrices.Imaginators.Strategies
+namespace MatVec.Elements
 {
     public interface IElementDrawStrategy
     {

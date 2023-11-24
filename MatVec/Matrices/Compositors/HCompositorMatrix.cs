@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommandsLib.Memento;
+using MatVec.Elements;
 using MatVec.Matrices.Drawers;
 using MatVec.Matrices.Imaginators;
 
@@ -44,6 +45,15 @@ namespace MatVec.Matrices.Compositors
             imaginator.DrawMatrix(this);
         }
 
+        public override IElement GetElement(int row, int col)
+        {
+            var trueCol = FindMatrix(row, col);
+            if (_currentId == -1)
+            {
+                return new ExclusiveElement();
+            }
+            return _matrices[_currentId].GetElement(row, trueCol);
+        }
         public override double this[int row, int col]
         {
             get

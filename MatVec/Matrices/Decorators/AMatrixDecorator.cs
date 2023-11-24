@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommandsLib.Memento;
+using MatVec.Elements;
 using MatVec.Matrices.Drawers;
 using MatVec.Matrices.Imaginators;
 
@@ -26,6 +27,12 @@ namespace MatVec.Matrices.Decorators
         public override IMatrix Undecorate() 
         {
             return Matrix.Undecorate();
+        }
+
+        public override IElement GetElement(int row, int col)
+        {
+            var ids = GetIds(row, col);
+            return Matrix.GetElement(ids[0], ids[1]);
         }
 
         public override void Draw(IMatrixImaginator imaginator) 

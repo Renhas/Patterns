@@ -1,4 +1,5 @@
 ﻿using CommandsLib.Memento;
+using MatVec.Elements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace MatVec.Vectors
         #region Vector
         public abstract int Dimension { get; }
         public abstract double this[int index] { get; set; }
+        public abstract IElement GetElement(int index);
         #endregion
         #region Mementable
         public AMementableVector() 

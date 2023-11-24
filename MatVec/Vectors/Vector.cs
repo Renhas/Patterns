@@ -1,24 +1,25 @@
 ﻿using CommandsLib.Memento;
+using MatVec.Elements;
 
 namespace MatVec.Vectors
 {
     public class Vector : AMementableVector
     {
-        private double[] values;
+        private IElement[] elements;
         public override int Dimension { get; }
 
-        public Vector(int dimension)
+        public Vector(int dimension, IElement defaultElement)
         {
             Dimension = dimension;
-            values = new double[Dimension];
-            ValuesInit();
+            elements = new IElement[Dimension];
+            ValuesInit(defaultElement);
         }
 
-        private void ValuesInit()
+        private void ValuesInit(IElement defaultElement)
         {
             for (int i = 0; i < Dimension; i++)
             {
-                values[i] = 0.0;
+                elements[i] = defaultElement.Copy();
             }
         }
 
@@ -26,29 +27,34 @@ namespace MatVec.Vectors
         {
             get
             {
-                return values[index];
+                return elements[index].Value;
             }
             set
             {
-                values[index] = value;
+                elements[index].Value = value;
             }
+        }
+
+        public override IElement GetElement(int index)
+        {
+            return elements[index].Copy();
         }
 
         #region Memento
         class MementoVector : IMemento 
         {
-            private double[] _values;
+            private IElement[] _values;
             private Vector _owner;
             public MementoVector(Vector owner)
             {
-                _values = new double[owner.values.Length];
-                owner.values.CopyTo(_values, 0);
+                _values = new IElement[owner.elements.Length];
+                owner.elements.CopyTo(_values, 0);
                 _owner = owner;
             }
 
             public void Restore()
             {
-                _values.CopyTo(_owner.values, 0);
+                _values.CopyTo(_owner.elements, 0);
             }
         }
 

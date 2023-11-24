@@ -1,4 +1,5 @@
-﻿using MatVec.Matrices.Drawers;
+﻿using MatVec.Elements;
+using MatVec.Matrices.Drawers;
 using MatVec.Vectors;
 
 namespace MatVec.Matrices
@@ -11,7 +12,7 @@ namespace MatVec.Matrices
 
         protected override IVector CreateVector()
         {
-            return new SparseVector(Rows);
+            return new SparseVector(Rows, new ExclusiveElement());
         }
     }
 }

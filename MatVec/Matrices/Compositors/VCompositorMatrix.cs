@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommandsLib.Memento;
+using MatVec.Elements;
 using MatVec.Matrices.Decorators;
 using MatVec.Matrices.Drawers;
 using MatVec.Matrices.Imaginators;
@@ -43,6 +44,13 @@ namespace MatVec.Matrices.Compositors
         public override IMatrix Undecorate()
         {
             return this;
+        }
+
+
+
+        public override IElement GetElement(int row, int col)
+        {
+            return _decorator.GetElement(row, col);
         }
 
         public override double this[int row, int col]

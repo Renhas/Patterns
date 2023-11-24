@@ -1,6 +1,6 @@
 ﻿using CommandsLib.Memento;
+using MatVec.Elements;
 using MatVec.Matrices.Drawers;
-using MatVec.Matrices.Imaginators.Strategies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,12 +18,12 @@ namespace MatVec.Matrices.Imaginators
             Drawer = drawer;
         }
 
-        private void DrawElements(IMatrix matrix, IElementDrawStrategy strategy)
+        private void DrawElements(IMatrix matrix)
         {
             for (int r = 0; r < matrix.Rows; r++)
                 for (int c = 0; c < matrix.Columns; c++)
                 {
-                    strategy.Draw(matrix, r, c, Drawer);
+                    matrix.GetElement(r, c).Strategy.Draw(matrix, r, c, Drawer);
                 }
         }
 
@@ -51,7 +51,7 @@ namespace MatVec.Matrices.Imaginators
         {
             MakeCanvas(matrix);
             DrawBorder(matrix);
-            DrawElements(matrix, StrategyFactory.Instance.CreateStrategy(matrix));
+            DrawElements(matrix);
             Flush();
         }
         #region Mementable
