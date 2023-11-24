@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommandsLib.Memento;
 using MatVec.Matrices.Decorators;
 using MatVec.Matrices.Drawers;
 using MatVec.Matrices.Imaginators;
 
 namespace MatVec.Matrices.Compositors
 {
-    public class VCompositorMatrix : IMatrixCompositor
+    public class VCompositorMatrix : AMementableMatrix, IMatrixCompositor
     {
-        private HCompositorMatrix _compositor;
-        private TransposeDecorator _decorator;
-
-        public int Rows
+        #region Matrix
+        public override int Rows
         {
             get
             {
@@ -22,7 +21,7 @@ namespace MatVec.Matrices.Compositors
             }
         }
 
-        public int Columns
+        public override int Columns
         {
             get
             {
@@ -36,16 +35,31 @@ namespace MatVec.Matrices.Compositors
             _decorator = new TransposeDecorator(_compositor);
         }
 
-        public void Draw(IMatrixImaginator imaginator)
+        public override void Draw(IMatrixImaginator imaginator)
         {
             imaginator.DrawMatrix(_decorator);
         }
 
-        public IMatrix Undecorate()
+        public override IMatrix Undecorate()
         {
             return this;
         }
 
+        public override double this[int row, int col]
+        {
+            get
+            {
+                return _decorator[row, col];
+            }
+            set
+            {
+                _decorator[row, col] = value;
+            }
+        }
+        #endregion
+        #region Compositor
+        private HCompositorMatrix _compositor;
+        private TransposeDecorator _decorator;
         public void Add(IMatrix matrix)
         {
             _compositor.Add(new TransposeDecorator(matrix));
@@ -70,17 +84,31 @@ namespace MatVec.Matrices.Compositors
         {
             return _compositor.GetIds(col, row);
         }
-
-        public double this[int row, int col]
+        #endregion
+        #region Mementable
+        class MementoVCompositorMatrix : IMemento 
         {
-            get
+            private HCompositorMatrix _compositor;
+            private TransposeDecorator _decorator;
+            private VCompositorMatrix _owner;
+            public MementoVCompositorMatrix(VCompositorMatrix owner) 
             {
-                return _decorator[row, col];
+                _owner = owner;
+                _compositor = _owner._compositor;
+                _decorator = _owner._decorator;
             }
-            set
+
+            public void Restore()
             {
-                _decorator[row, col] = value;
+                _owner._compositor = _compositor;
+                _owner._decorator = _decorator;
             }
         }
+        public override IMemento CreateMemento()
+        {
+            return new MementoVCompositorMatrix(this);
+        }
+        #endregion
+
     }
 }

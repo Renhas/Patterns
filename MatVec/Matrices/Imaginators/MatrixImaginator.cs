@@ -1,4 +1,5 @@
-﻿using MatVec.Matrices.Drawers;
+﻿using CommandsLib.Memento;
+using MatVec.Matrices.Drawers;
 using MatVec.Matrices.Imaginators.Strategies;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MatVec.Matrices.Imaginators
 {
-    public class MatrixImaginator : IMatrixImaginator
+    public class MatrixImaginator : AMementableImaginator, IMatrixImaginator
     {
         public IDrawer Drawer { private get; set; }
 
@@ -53,5 +54,26 @@ namespace MatVec.Matrices.Imaginators
             DrawElements(matrix, StrategyFactory.Instance.CreateStrategy(matrix));
             Flush();
         }
+        #region Mementable
+        class MementoMatrixImaginator : IMemento 
+        {
+            private IDrawer _state;
+            private MatrixImaginator _owner;
+            public MementoMatrixImaginator(MatrixImaginator owner) 
+            {
+                _owner = owner;
+                _state = _owner.Drawer;
+            }
+
+            public void Restore()
+            {
+                _owner.Drawer = _state;
+            }
+        }
+        public override IMemento CreateMemento()
+        {
+            return new MementoMatrixImaginator(this);
+        }
+        #endregion
     }
 }

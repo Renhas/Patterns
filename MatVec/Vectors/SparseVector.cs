@@ -1,12 +1,15 @@
-﻿using System;
+﻿using CommandsLib.Memento;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MatVec.Vectors
 {
-    public class SparseVector : IVector
+    public class SparseVector : AMementableVector
     {
+        #region Vector
         private Dictionary<int, double> values;
-        public int Dimension { get; }
+        public override int Dimension { get; }
         public SparseVector(int dimension)
         {
             if (dimension <= 0)
@@ -23,7 +26,7 @@ namespace MatVec.Vectors
                 throw new IndexOutOfRangeException(nameof(index));
         }
 
-        public double this[int index]
+        public override double this[int index]
         {
             get
             {
@@ -48,5 +51,28 @@ namespace MatVec.Vectors
                 }
             }
         }
+        #endregion
+        #region Memento
+        class MementoSparseVector : IMemento 
+        {
+            private Dictionary<int, double> _values;
+            private SparseVector _owner;
+            public MementoSparseVector(SparseVector owner)
+            {
+
+                _values = owner.values.ToDictionary(entry => entry.Key, entry => entry.Value);
+                _owner = owner;
+            }
+
+            public void Restore()
+            {
+                _owner.values = _values.ToDictionary(entry => entry.Key, entry => entry.Value);
+            }
+        }
+        public override IMemento CreateMemento()
+        {
+            return new MementoSparseVector(this);
+        }
+        #endregion
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace MatVec.Matrices
+﻿using CommandsLib.Memento;
+
+namespace MatVec.Matrices
 {
-    public interface IMatrix : IDrawable
+    public interface IMatrix : IDrawable, IMementable
     {
         public int Rows { get; }
         public int Columns { get; }

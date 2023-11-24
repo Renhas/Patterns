@@ -1,15 +1,16 @@
 ﻿using System;
+using CommandsLib.Memento;
 using MatVec.Matrices.Drawers;
 using MatVec.Matrices.Imaginators;
 using MatVec.Vectors;
 
 namespace MatVec.Matrices
 {
-    public abstract class AMatrix : IMatrix
+    public abstract class AMatrix : AMementableMatrix
     {
         private IVector[] _vectors;
-        public int Rows { get; }
-        public int Columns { get; }
+        public override int Rows { get; }
+        public override int Columns { get; }
 
         public AMatrix(int rows, int columns)
         {
@@ -36,18 +37,17 @@ namespace MatVec.Matrices
         }
         protected abstract IVector CreateVector();
 
-        public IMatrix Undecorate()
+        public override IMatrix Undecorate()
         {
             return this;
         }
 
-
-        public void Draw(IMatrixImaginator imaginator) 
+        public override void Draw(IMatrixImaginator imaginator) 
         {
             imaginator.DrawMatrix(this);
         }
 
-        public double this[int row, int col]
+        public override double this[int row, int col]
         {
             get
             {
@@ -59,6 +59,28 @@ namespace MatVec.Matrices
             }
         }
 
+        #region Memento
+        class MementoAMatrix : IMemento
+        {
+            private IVector[] _state;
+            private AMatrix _owner;
+            public MementoAMatrix(AMatrix owner)
+            {
+                _owner = owner;
+                _state = new IVector[_owner._vectors.Length];
+                _owner._vectors.CopyTo(_state, 0);
+            }
 
+            public void Restore()
+            {
+                _owner._vectors = new IVector[_state.Length];
+                _state.CopyTo(_owner._vectors, 0);
+            }
+        }
+        public override IMemento CreateMemento()
+        {
+            return new MementoAMatrix(this);
+        }
+        #endregion
     }
 }

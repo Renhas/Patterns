@@ -1,9 +1,11 @@
-﻿namespace MatVec.Vectors
+﻿using CommandsLib.Memento;
+
+namespace MatVec.Vectors
 {
-    public class Vector : IVector
+    public class Vector : AMementableVector
     {
         private double[] values;
-        public int Dimension { get; }
+        public override int Dimension { get; }
 
         public Vector(int dimension)
         {
@@ -20,7 +22,7 @@
             }
         }
 
-        public double this[int index]
+        public override double this[int index]
         {
             get
             {
@@ -32,6 +34,28 @@
             }
         }
 
+        #region Memento
+        class MementoVector : IMemento 
+        {
+            private double[] _values;
+            private Vector _owner;
+            public MementoVector(Vector owner)
+            {
+                _values = new double[owner.values.Length];
+                owner.values.CopyTo(_values, 0);
+                _owner = owner;
+            }
 
+            public void Restore()
+            {
+                _values.CopyTo(_owner.values, 0);
+            }
+        }
+
+        public override IMemento CreateMemento()
+        {
+            return new MementoVector(this);
+        }
+        #endregion
     }
 }

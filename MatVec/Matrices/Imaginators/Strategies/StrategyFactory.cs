@@ -10,6 +10,7 @@ namespace MatVec.Matrices.Imaginators.Strategies
 {
     public class StrategyFactory
     {
+        #region Singleton
         private static StrategyFactory? _instance;
         public static StrategyFactory Instance {
             get
@@ -20,8 +21,7 @@ namespace MatVec.Matrices.Imaginators.Strategies
             } 
         }
         private StrategyFactory() { }
-        
-
+        #endregion
         public virtual IElementDrawStrategy CreateStrategy(IMatrix matrix) 
         {
             var trueMatrix = matrix.Undecorate();

@@ -1,4 +1,5 @@
-﻿using MatVec.Matrices.Drawers;
+﻿using CommandsLib.Memento;
+using MatVec.Matrices.Drawers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,9 @@ namespace MatVec.Matrices.Decorators
     public class TransposeDecorator : AMatrixDecorator
     {
 
-        public override int Rows { get { return _matrix.Columns; } }
+        public override int Rows { get { return Matrix.Columns; } }
 
-        public override int Columns { get { return _matrix.Rows; } }
+        public override int Columns { get { return Matrix.Rows; } }
 
         public TransposeDecorator(IMatrix matrix) : base(matrix)
         {
@@ -28,11 +29,18 @@ namespace MatVec.Matrices.Decorators
         {
             get 
             {
-                return _matrix[col, row];
+                return Matrix[col, row];
             } set 
             {
-                _matrix[col, row] = value;
+                Matrix[col, row] = value;
             }
         }
+
+        #region Memento
+        public override IMemento CreateMemento()
+        {
+            return new MementoAMatrixDecorator(this);
+        }
+        #endregion
     }
 }

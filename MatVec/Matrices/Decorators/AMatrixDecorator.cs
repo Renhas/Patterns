@@ -3,38 +3,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommandsLib.Memento;
 using MatVec.Matrices.Drawers;
 using MatVec.Matrices.Imaginators;
 
 namespace MatVec.Matrices.Decorators
 {
-    public abstract class AMatrixDecorator : IMatrix
+    public abstract class AMatrixDecorator : AMementableMatrix
     {
-        protected IMatrix _matrix;
-
-        public abstract int Rows { get; }
-        public abstract int Columns { get; }
+        protected IMatrix Matrix { get; private set; }
 
         public AMatrixDecorator(IMatrix matrix)
         {
-            _matrix = matrix;
+            Matrix = matrix;
         }
         public abstract int[] GetIds(int row, int col);
         public IMatrix GetMatrix() 
         {
-            return _matrix;
+            return Matrix;
         }
 
-        public IMatrix Undecorate() 
+        public override IMatrix Undecorate() 
         {
-            return _matrix.Undecorate();
+            return Matrix.Undecorate();
         }
 
-        public virtual void Draw(IMatrixImaginator imaginator) 
+        public override void Draw(IMatrixImaginator imaginator) 
         {
             imaginator.DrawMatrix(this);
         }
 
-        public abstract double this[int row, int col] { get; set; }
+        #region Memento
+        protected class MementoAMatrixDecorator : IMemento 
+        {
+            private IMatrix _state;
+            protected AMatrixDecorator _owner { get; private set; }
+            public MementoAMatrixDecorator(AMatrixDecorator owner) 
+            {
+                _owner = owner;
+                _state = _owner.Matrix;
+            }
+
+            public virtual void Restore()
+            {
+                _owner.Matrix = _state;
+            }
+        }
+        #endregion
     }
 }

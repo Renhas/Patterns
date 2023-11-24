@@ -4,17 +4,16 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommandsLib.Memento;
 using MatVec.Matrices.Drawers;
 using MatVec.Matrices.Imaginators;
 
 namespace MatVec.Matrices.Compositors
 {
-    public class HCompositorMatrix : IMatrixCompositor
+    public class HCompositorMatrix : AMementableMatrix, IMatrixCompositor
     {
-        private List<IMatrix> _matrices;
-        private int _currentId = -1;
-
-        public int Rows
+        #region Matrix
+        public override int Rows
         {
             get
             {
@@ -22,7 +21,7 @@ namespace MatVec.Matrices.Compositors
             }
         }
 
-        public int Columns
+        public override int Columns
         {
             get
             {
@@ -35,6 +34,46 @@ namespace MatVec.Matrices.Compositors
             _matrices = new List<IMatrix>();
         }
 
+        public override IMatrix Undecorate()
+        {
+            return this;
+        }
+
+        public override void Draw(IMatrixImaginator imaginator)
+        {
+            imaginator.DrawMatrix(this);
+        }
+
+        public override double this[int row, int col]
+        {
+            get
+            {
+                IndexCheck(row, col);
+                col = FindMatrix(row, col);
+                if (_currentId == -1)
+                {
+                    return 0;
+                }
+                IMatrix temp = _matrices[_currentId];
+                return temp[row, col];
+
+            }
+            set
+            {
+                IndexCheck(row, col);
+                col = FindMatrix(row, col);
+                if (_currentId == -1)
+                {
+                    return;
+                }
+                IMatrix temp = _matrices[_currentId];
+                temp[row, col] = value;
+            }
+        }
+        #endregion
+        #region Compositor
+        private List<IMatrix> _matrices;
+        private int _currentId = -1;
         private int FindMatrix(int row, int col)
         {
             try
@@ -76,16 +115,6 @@ namespace MatVec.Matrices.Compositors
             return new int[2] { row, FindMatrix(row, column) };
         }
 
-        public IMatrix Undecorate()
-        {
-            return this;
-        }
-
-        public void Draw(IMatrixImaginator imaginator)
-        {
-            imaginator.DrawMatrix(this);
-        }
-
         public void Add(IMatrix matrix)
         {
             _matrices.Add(matrix);
@@ -108,32 +137,26 @@ namespace MatVec.Matrices.Compositors
             if (_currentId < 0) return null;
             return _matrices[_currentId];
         }
-
-        public double this[int row, int col]
+        #endregion
+        #region Mementable
+        class MementoHCompositorMatrix : IMemento 
         {
-            get
+            private List<IMatrix> _state;
+            private HCompositorMatrix _owner;
+            public MementoHCompositorMatrix(HCompositorMatrix owner) 
             {
-                IndexCheck(row, col);
-                col = FindMatrix(row, col);
-                if (_currentId == -1)
-                {
-                    return 0;
-                }
-                IMatrix temp = _matrices[_currentId];
-                return temp[row, col];
-
+                _owner = owner;
+                _state = new List<IMatrix>(_owner._matrices);
             }
-            set
+            public void Restore()
             {
-                IndexCheck(row, col);
-                col = FindMatrix(row, col);
-                if (_currentId == -1)
-                {
-                    return;
-                }
-                IMatrix temp = _matrices[_currentId];
-                temp[row, col] = value;
+                _owner._matrices = new List<IMatrix>(_state);
             }
         }
+        public override IMemento CreateMemento()
+        {
+            return new MementoHCompositorMatrix(this);
+        }
+        #endregion
     }
 }
