@@ -32,12 +32,12 @@ namespace CommandsLib.Commands
         private List<ICommand> _commands;
         private bool _block = false;
         private long _currentTime = 0;
-        private long _memory = 0;
+        private List<long> _memory = new List<long>();
         public void Registry(ACommand command, long time = 0) 
         {
             if (_block) return;
-            CheckTime(time);
             _commands.Add(command);
+            CheckTime(time);
         }
 
         private bool RemoveCommand() 
@@ -73,25 +73,30 @@ namespace CommandsLib.Commands
 
         private void CheckMemory(long memory) 
         {
-            _memory += memory;
-            Debug.WriteLine(_memory);
-            if (_memory >= _maxMemory) 
+            _memory.Add(memory);
+            while (_memory.Sum() >= _maxMemory) 
             {
                 var secondBackup = _commands.FindIndex(1, (cmd) => cmd is MementoCompositor);
                 if (secondBackup == -1) return;
+                Debug.WriteLine(secondBackup);
                 _commands.RemoveRange(1, secondBackup - 1);
-                var start = GC.GetTotalMemory(false);
                 _commands.RemoveAt(0);
-                _memory -= start - GC.GetTotalMemory(false);
+                _memory.RemoveAt(0);
             }
         }
 
         public void Backup() 
         {
-            var start = GC.GetTotalMemory(false);
+            if (_commands.Count > 0 && _commands.Last() is MementoCompositor) 
+            {
+                _commands.RemoveAt(_commands.Count - 1);
+            }
+            var start = GC.GetTotalMemory(true);
             var backup = (ICommand)MementableSystem.Instance.CreateMemento();
+            var total = GC.GetTotalMemory(false) - start;
             _commands.Add(backup);
-            CheckMemory(GC.GetTotalMemory(false) - start);
+            CheckMemory(total);
+            
         }
     }
 }

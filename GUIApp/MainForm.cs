@@ -24,7 +24,6 @@ namespace GUIApp
         {
             InitializeComponent();
             _random = new RestorableRandom();
-            //_constructor = new MatrixConstructor();
             _drawer = new DrawerCompositor(new List<IDrawer>() 
             {
                 new TextBoxDrawer(console),
@@ -34,6 +33,7 @@ namespace GUIApp
             _matrix = null;
             _dragging = false;
             _xPos = _yPos = 0;
+            _ = CM.Instance;
         }
 
         private void DrawMatrix()
@@ -72,9 +72,10 @@ namespace GUIApp
             var constructor = new MatrixConstructor();
             if (constructor.ShowDialog() == DialogResult.OK)
             {
-                _matrix = constructor.Matrix;
+                new CommandSaveMatrix(this, constructor.Matrix).Execute();
+                //_matrix = constructor.Matrix;
+                //DrawMatrix();
                 CM.Instance.Backup();
-                DrawMatrix();
             }
 
         }
@@ -191,6 +192,22 @@ namespace GUIApp
         }
         #endregion
         #region Commands
+        class CommandSaveMatrix : ACommand 
+        {
+            private MainForm _owner;
+            private IMatrix _matrix;
+            public CommandSaveMatrix(MainForm owner, IMatrix matrix)
+            {
+                _owner = owner;
+                _matrix = matrix;
+            }
+
+            protected override void DoExecute()
+            {
+                _owner._matrix = _matrix;
+                _owner.DrawMatrix();
+            }
+        }
         class CommandChangeValue : ACommand 
         {
             private MainForm _owner;
