@@ -1,8 +1,12 @@
-﻿namespace MatVec.Vectors
+﻿using CommandsLib.Memento;
+using MatVec.Elements;
+
+namespace MatVec.Vectors
 {
-    public interface IVector
+    public interface IVector : IMementable
     {
-        public int Dimension { get; }
-        public double this[int index] { get; set; }
+        IElement GetElement(int index);
+        int Dimension { get; }
+        double this[int index] { get; set; }
     }
 }

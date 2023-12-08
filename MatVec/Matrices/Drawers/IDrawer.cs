@@ -1,6 +1,8 @@
-﻿namespace MatVec.Matrices.Drawers
+﻿using CommandsLib.Memento;
+
+namespace MatVec.Matrices.Drawers
 {
-    public interface IDrawer
+    public interface IDrawer : IMementable
     {
         public bool Border { get; set; }
         public void DrawBorder(IMatrix matrix);

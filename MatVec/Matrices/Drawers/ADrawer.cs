@@ -1,8 +1,9 @@
-﻿using System;
+﻿using CommandsLib.Memento;
+using System;
 
 namespace MatVec.Matrices.Drawers
 {
-    public abstract class ADrawer : IDrawer
+    public abstract class ADrawer : AMementableDrawer, IDrawer
     {
         public bool Border { get; set; }
         
@@ -41,6 +42,26 @@ namespace MatVec.Matrices.Drawers
         public abstract void Flush();
         public abstract void DrawBorder(IMatrix matrix);
 
+        #region Mementable
+        protected class MementoADrawer : IMemento 
+        {
+            private bool _state;
+            private ADrawer _owner;
+            public MementoADrawer(ADrawer owner) 
+            {
+                _owner = owner;
+                _state = _owner.Border;
+            }
 
+            public void Restore()
+            {
+                _owner.Border = _state;
+            }
+        }
+        public override IMemento CreateMemento()
+        {
+            return new MementoADrawer(this);
+        }
+        #endregion
     }
 }

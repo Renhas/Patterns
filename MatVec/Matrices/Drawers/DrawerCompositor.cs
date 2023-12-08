@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using CommandsLib.Memento;
+using System.Collections.Generic;
 
 namespace MatVec.Matrices.Drawers
 {
-    public class DrawerCompositor : IDrawer
+    public class DrawerCompositor : AMementableDrawer, IDrawer
     {
         private List<IDrawer> _drawers;
         private bool _border;
@@ -81,5 +82,30 @@ namespace MatVec.Matrices.Drawers
                 drawer.MakeCanvas(matrix);
             }
         }
+        #region Mementable
+        class MementoDrawerCompositor : IMemento 
+        {
+            private List<IDrawer> _drawers;
+            private bool _border;
+            private DrawerCompositor _owner;
+
+            public MementoDrawerCompositor(DrawerCompositor owner) 
+            {
+                _owner = owner;
+                _drawers = new List<IDrawer>(_owner._drawers);
+                _border = _owner._border;
+            }
+
+            public void Restore()
+            {
+                _owner._drawers = _drawers;
+                _owner._border = _border;
+            }
+        }
+        public override IMemento CreateMemento()
+        {
+            return new MementoDrawerCompositor(this);
+        }
+        #endregion
     }
 }

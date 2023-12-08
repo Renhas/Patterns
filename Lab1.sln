@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatVec", "MatVec\MatVec.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{B7365A69-2E8D-4309-A35D-4C42EF0D815C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIApp", "GUIApp\GUIApp.csproj", "{8DE4F189-AB44-4F8A-9332-3268B1BB588E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GUIApp", "GUIApp\GUIApp.csproj", "{8DE4F189-AB44-4F8A-9332-3268B1BB588E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandsLib", "CommandsLib\CommandsLib.csproj", "{CCC144A0-EF3D-43C4-B5C1-71027AF7D195}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{8DE4F189-AB44-4F8A-9332-3268B1BB588E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DE4F189-AB44-4F8A-9332-3268B1BB588E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DE4F189-AB44-4F8A-9332-3268B1BB588E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCC144A0-EF3D-43C4-B5C1-71027AF7D195}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCC144A0-EF3D-43C4-B5C1-71027AF7D195}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCC144A0-EF3D-43C4-B5C1-71027AF7D195}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCC144A0-EF3D-43C4-B5C1-71027AF7D195}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

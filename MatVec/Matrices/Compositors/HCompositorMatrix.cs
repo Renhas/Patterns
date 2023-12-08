@@ -4,18 +4,17 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommandsLib.Memento;
+using MatVec.Elements;
 using MatVec.Matrices.Drawers;
 using MatVec.Matrices.Imaginators;
-using MatVec.Matrices.Visitors;
 
 namespace MatVec.Matrices.Compositors
 {
-    public class HCompositorMatrix : IMatrix
+    public class HCompositorMatrix : AMementableMatrix, IMatrixCompositor
     {
-        private List<IMatrix> _matrices;
-        private int _currentId = -1;
-
-        public int Rows
+        #region Matrix
+        public override int Rows
         {
             get
             {
@@ -23,7 +22,7 @@ namespace MatVec.Matrices.Compositors
             }
         }
 
-        public int Columns
+        public override int Columns
         {
             get
             {
@@ -36,6 +35,55 @@ namespace MatVec.Matrices.Compositors
             _matrices = new List<IMatrix>();
         }
 
+        public override IMatrix Undecorate()
+        {
+            return this;
+        }
+
+        public override void Draw(IMatrixImaginator imaginator)
+        {
+            imaginator.DrawMatrix(this);
+        }
+
+        public override IElement GetElement(int row, int col)
+        {
+            var trueCol = FindMatrix(row, col);
+            if (_currentId == -1)
+            {
+                return new ExclusiveElement();
+            }
+            return _matrices[_currentId].GetElement(row, trueCol);
+        }
+        public override double this[int row, int col]
+        {
+            get
+            {
+                IndexCheck(row, col);
+                col = FindMatrix(row, col);
+                if (_currentId == -1)
+                {
+                    return 0;
+                }
+                IMatrix temp = _matrices[_currentId];
+                return temp[row, col];
+
+            }
+            set
+            {
+                IndexCheck(row, col);
+                col = FindMatrix(row, col);
+                if (_currentId == -1)
+                {
+                    return;
+                }
+                IMatrix temp = _matrices[_currentId];
+                temp[row, col] = value;
+            }
+        }
+        #endregion
+        #region Compositor
+        private List<IMatrix> _matrices;
+        private int _currentId = -1;
         private int FindMatrix(int row, int col)
         {
             try
@@ -72,120 +120,53 @@ namespace MatVec.Matrices.Compositors
                 throw new ArgumentOutOfRangeException(nameof(col));
         }
 
-        //public IMatrix? GetMatrix(int row, int column) 
-        //{
-        //    FindMatrix(row, column);
-        //    if (_currentId < 0) return null;
-        //    return _matrices[_currentId];
-        //}
-
         public int[] GetIds(int row, int column) 
         {
             return new int[2] { row, FindMatrix(row, column) };
         }
+
         public void Add(IMatrix matrix)
         {
             _matrices.Add(matrix);
         }
 
-        //public void Draw()
-        //{
-        //    MakeCanvas(Identity);
-        //    DrawBorder(Identity);
-        //    for (int i = 0; i < _matrices.Count; i++)
-        //    {
-        //        _currentId = -1;
-        //        _index = i;
-        //        IMatrix mtx = _matrices[i];
-        //        ConfigureMatrix(mtx);
-        //        mtx.Identity = Identity;
-        //        mtx.Draw();
-        //        mtx.Identity = mtx;
-        //    }
-        //    _index = -1;
-        //    Flush();
-        //}
-
-        //public void DrawBorder(IMatrix matrix)
-        //{
-        //    if (_index == -1)
-        //    {
-        //        Drawer.DrawBorder(Identity);
-        //    }
-        //}
-
-        //public void MakeCanvas(IMatrix matrix)
-        //{
-        //    if (_index == -1)
-        //    {
-        //        Drawer.MakeCanvas(Identity);
-        //    }
-        //}
-
-        //public void DrawElement(IMatrix matrix, int row, int column)
-        //{
-        //    _ = matrix[row, column];
-        //    if (_currentId != _index) return;
-        //    Drawer.DrawElement(Identity, row, column);
-        //    _currentId = -1;
-        //}
-
-        //public void Flush()
-        //{
-        //    if (_index == -1)
-        //    {
-        //        Drawer.Flush();
-        //    }
-        //}
-
-        //public void Clear()
-        //{
-        //    Drawer.Clear();
-        //}
-
-        public IMatrix GetElement()
+        public void Remove(IMatrix matrix)
         {
-            return this;
+            _matrices.Remove(matrix);
         }
 
-        public void Accept(IVisitor visitor)
+        public IMatrix Get(int id)
         {
-            var ids = GetIds(visitor.Row, visitor.Column);
-            if (_currentId < 0) return;
-            visitor.SetIds(ids[0], ids[1]);
-            _matrices[_currentId].Accept(visitor);
+            return _matrices[id];
         }
 
-        public void Draw(IMatrixImaginator imaginator)
+        public IMatrix Get(int row, int col)
         {
-            imaginator.DrawMatrix(this);
+            IndexCheck(row, col);
+            FindMatrix(row, col);
+            if (_currentId < 0) return null;
+            return _matrices[_currentId];
         }
-
-        public double this[int row, int col]
+        #endregion
+        #region Mementable
+        class MementoHCompositorMatrix : IMemento 
         {
-            get
+            private List<IMatrix> _state;
+            private HCompositorMatrix _owner;
+            public MementoHCompositorMatrix(HCompositorMatrix owner) 
             {
-                IndexCheck(row, col);
-                col = FindMatrix(row, col);
-                if (_currentId == -1)
-                {
-                    return 0;
-                }
-                IMatrix temp = _matrices[_currentId];
-                return temp[row, col];
-
+                _owner = owner;
+                _state = new List<IMatrix>(_owner._matrices);
             }
-            set
+            public void Restore()
             {
-                IndexCheck(row, col);
-                col = FindMatrix(row, col);
-                if (_currentId == -1)
-                {
-                    return;
-                }
-                IMatrix temp = _matrices[_currentId];
-                temp[row, col] = value;
+                _owner._matrices = new List<IMatrix>(_state);
             }
         }
+        public override IMemento CreateMemento()
+        {
+            return new MementoHCompositorMatrix(this);
+        }
+        #endregion
     }
 }

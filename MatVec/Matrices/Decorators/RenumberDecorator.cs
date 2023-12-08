@@ -1,5 +1,5 @@
-﻿using MatVec.Matrices.Drawers;
-using MatVec.Matrices.Visitors;
+﻿using CommandsLib.Memento;
+using MatVec.Matrices.Drawers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -15,14 +15,14 @@ namespace MatVec.Matrices.Decorators
         private int[] _rowsId;
         private int[] _colsId;
 
-        public override int Rows { get { return _matrix.Rows; } }
+        public override int Rows { get { return Matrix.Rows; } }
 
-        public override int Columns { get { return _matrix.Columns; } }
+        public override int Columns { get { return Matrix.Columns; } }
 
         public RenumberDecorator(IMatrix matrix) : base(matrix)
         {
-            _rowsId = new int[_matrix.Rows];
-            _colsId = new int[_matrix.Columns];
+            _rowsId = new int[Matrix.Rows];
+            _colsId = new int[Matrix.Columns];
             InitArrays(_rowsId);
             InitArrays(_colsId);
         }
@@ -55,13 +55,41 @@ namespace MatVec.Matrices.Decorators
             get 
             {
                 var ids = GetIds(row, col);
-                return _matrix[ids[0], ids[1]];
+                return Matrix[ids[0], ids[1]];
             }
             set 
             {
                 var ids = GetIds(row, col);
-                _matrix[_rowsId[row], _colsId[col]] = value;
+                Matrix[_rowsId[row], _colsId[col]] = value;
             }
         }
+
+        #region Memento
+        class MementoRenumberDecorator : MementoAMatrixDecorator
+        {
+            private int[] _rows;
+            private int[] _cols;
+            public MementoRenumberDecorator(RenumberDecorator owner) : base(owner)
+            {
+                _rows = new int[owner.Rows];
+                _cols = new int[owner.Columns];
+                owner._rowsId.CopyTo(_rows, 0);
+                owner._colsId.CopyTo(_cols, 0);
+            }
+            public override void Restore()
+            {
+                base.Restore();
+                var temp = (RenumberDecorator)_owner;
+                temp._rowsId = new int[_rows.Length];
+                temp._colsId = new int[_cols.Length];
+                _rows.CopyTo(temp._rowsId, 0);
+                _cols.CopyTo(temp._colsId, 0);
+            }
+        }
+        public override IMemento CreateMemento()
+        {
+            return new MementoRenumberDecorator(this);
+        }
+        #endregion
     }
 }

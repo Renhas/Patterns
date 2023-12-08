@@ -1,13 +1,14 @@
-﻿using MatVec.Matrices.Visitors;
+﻿using CommandsLib.Memento;
+using MatVec.Elements;
 
 namespace MatVec.Matrices
 {
-    public interface IMatrix : IDrawable
+    public interface IMatrix : IDrawable, IMementable
     {
-        public int Rows { get; }
-        public int Columns { get; }
-        public double this[int row, int col] { get; set; }
-        public IMatrix GetElement();
-        public void Accept(IVisitor visitor);
+        int Rows { get; }
+        int Columns { get; }
+        double this[int row, int col] { get; set; }
+        IMatrix Undecorate();
+        IElement GetElement(int row, int col);
     }
 }

@@ -1,5 +1,5 @@
-﻿using MatVec.Matrices.Drawers;
-using MatVec.Matrices.Visitors;
+﻿using MatVec.Elements;
+using MatVec.Matrices.Drawers;
 using MatVec.Vectors;
 
 namespace MatVec.Matrices
@@ -10,14 +10,9 @@ namespace MatVec.Matrices
         {
         }
 
-        public override void Accept(IVisitor visitor)
-        {
-            visitor.VisitSparseMatrix(this);
-        }
-
         protected override IVector CreateVector()
         {
-            return new SparseVector(Rows);
+            return new SparseVector(Rows, new ExclusiveElement());
         }
     }
 }

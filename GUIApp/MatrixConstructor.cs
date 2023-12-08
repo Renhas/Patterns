@@ -1,4 +1,6 @@
-﻿using MatVec.Matrices;
+﻿using CommandsLib.Commands;
+using CommandsLib.Memento;
+using MatVec.Matrices;
 using MatVec.Matrices.Compositors;
 using MatVec.Matrices.Imaginators;
 using System;
@@ -19,7 +21,7 @@ namespace GUIApp
             Matrix = null;
             _params = new Parameters(1, 1, 1, 2);
         }
-
+        #region Creators
         private IMatrix? CreateMatrix() 
         {
             var typeId = SearchRadioBtnId(panelType);
@@ -62,7 +64,8 @@ namespace GUIApp
             }
             return null;
         }
-
+        #endregion
+        #region Adders
         private void AddNewMatrix() 
         {
             var matrix = CreateMatrix();
@@ -111,7 +114,8 @@ namespace GUIApp
             var compositor = (VCompositorMatrix)Matrix;
             compositor.Add(matrix);
         }
-
+        #endregion
+        #region Tools
         private bool SetParams() 
         {
             var paramsForm = new MatrixParams(_params);
@@ -139,6 +143,13 @@ namespace GUIApp
             Matrix.Draw(_imaginator);
         }
 
+        private void CloseWithStatus(DialogResult result)
+        {
+            this.DialogResult = result;
+            this.Close();
+        }
+        #endregion
+        #region Events
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             if (Matrix == null)
@@ -161,12 +172,6 @@ namespace GUIApp
             CloseWithStatus(DialogResult.Cancel);
         }
 
-        private void CloseWithStatus(DialogResult result) 
-        {
-            this.DialogResult = result;
-            this.Close();
-        }
-
         private void MatrixConstructor_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (MessageBox.Show("Уверены?", "Подтверждение", MessageBoxButtons.YesNo,
@@ -175,5 +180,34 @@ namespace GUIApp
                 e.Cancel = true;
             }
         }
+        #endregion
+        //#region Mementable
+        //class MementoMatrixConstructor : IMemento 
+        //{
+        //    private IMatrix? _matrix;
+        //    private IMatrixImaginator _imaginator;
+        //    private Parameters _params;
+        //    private MatrixConstructor _owner;
+        //    public MementoMatrixConstructor(MatrixConstructor owner) 
+        //    {
+        //        _owner = owner;
+        //        _matrix = _owner.Matrix;
+        //        _imaginator = _owner._imaginator;
+        //        _params = _owner._params;
+        //    }
+
+        //    public void Restore()
+        //    {
+        //        _owner.Matrix = _matrix;
+        //        _owner._imaginator = _imaginator;
+        //        _owner._params = _params;
+        //    }
+        //}
+
+        //public override IMemento CreateMemento()
+        //{
+        //    return new MementoMatrixConstructor(this);
+        //}
+        //#endregion
     }
 }

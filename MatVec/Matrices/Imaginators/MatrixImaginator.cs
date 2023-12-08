@@ -1,5 +1,6 @@
-﻿using MatVec.Matrices.Drawers;
-using MatVec.Matrices.Visitors;
+﻿using CommandsLib.Memento;
+using MatVec.Elements;
+using MatVec.Matrices.Drawers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MatVec.Matrices.Imaginators
 {
-    public class MatrixImaginator : IMatrixImaginator
+    public class MatrixImaginator : AMementableImaginator, IMatrixImaginator
     {
         public IDrawer Drawer { private get; set; }
 
@@ -19,16 +20,10 @@ namespace MatVec.Matrices.Imaginators
 
         private void DrawElements(IMatrix matrix)
         {
-            VisitorProvider visitor;
             for (int r = 0; r < matrix.Rows; r++)
                 for (int c = 0; c < matrix.Columns; c++)
                 {
-                    visitor = new VisitorProvider(matrix[r, c], r, c);
-                    matrix.Accept(visitor);
-                    if (visitor.Provide)
-                    {
-                        DrawElement(matrix, r, c);
-                    }
+                    matrix.GetElement(r, c).Strategy.Draw(matrix, r, c, Drawer);
                 }
         }
 
@@ -59,5 +54,26 @@ namespace MatVec.Matrices.Imaginators
             DrawElements(matrix);
             Flush();
         }
+        #region Mementable
+        class MementoMatrixImaginator : IMemento 
+        {
+            private IDrawer _state;
+            private MatrixImaginator _owner;
+            public MementoMatrixImaginator(MatrixImaginator owner) 
+            {
+                _owner = owner;
+                _state = _owner.Drawer;
+            }
+
+            public void Restore()
+            {
+                _owner.Drawer = _state;
+            }
+        }
+        public override IMemento CreateMemento()
+        {
+            return new MementoMatrixImaginator(this);
+        }
+        #endregion
     }
 }
